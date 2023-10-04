@@ -1,0 +1,17 @@
+[
+  {
+    "id": "E5CB8h1E-dqe2wx0gNl3p",
+    "products": [{ "id": "C9VlrmHgQUstrlfz9Clag", "quantity": 2 }]
+  },
+  {
+    "id": "4KEXFeJRw2kdd8PfZlfHX",
+    "products": [{ "id": "C9VlrmHgQUstrlfz9Clag", "quantity": 1 }]
+  },
+  {
+    "id": "zBuwUpAdC8XR9fmAYQEg8",
+    "products": [
+      { "id": "qHcs6knfGeY-NZtjsLVFV", "quantity": 2 },
+      { "id": "C9VlrmHgQUstrlfz9Clag", "quantity": 4 }
+    ]
+  }
+]
