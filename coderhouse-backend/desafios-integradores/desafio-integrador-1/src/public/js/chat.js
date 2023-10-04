@@ -1,61 +1,42 @@
-const socket = io();
+document
+  .getElementById("username-form")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-document.getElementById("prod-form").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const titleInput = document.getElementById("title");
-  const title = titleInput.value;
-  titleInput.value = "";
+    const userInputElement = document.getElementById("username");
+    const messageInputElement = document.getElementById("message");
+    const user = userInputElement.value;
+    const message = messageInputElement.value;
 
-  const descInput = document.getElementById("description");
-  const description = descInput.value;
-  descInput.value = "";
+    try {
+      const response = await fetch("/api/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user, message }),
+      });
 
-  const codeInput = document.getElementById("code");
-  const code = codeInput.value;
-  codeInput.value = "";
+      if (response.ok) {
+        const responseData = await response.json();
+        const successMessage = responseData.message;
 
-  const priceInput = document.getElementById("price");
-  const price = priceInput.value;
-  priceInput.value = "";
-
-  const statusInput = document.getElementById("status");
-  const status = statusInput.value;
-  statusInput.value = "";
-
-  const stockInput = document.getElementById("stock");
-  const stock = stockInput.value;
-  stockInput.value = "";
-
-  const catInput = document.getElementById("category");
-  const category = catInput.value;
-  catInput.value = "";
-
-  const imgInput = document.getElementById("image");
-  const thumbnails = imgInput.value;
-  imgInput.value = "";
-
-  const newProduct = {
-    title: title,
-    description: description,
-    code: code,
-    price: price,
-    status: status,
-    stock: stock,
-    category: category,
-    thumbnails: thumbnails,
-  };
-  socket.emit("newProd", newProduct);
-});
-
-socket.on("success", (data) => {
-  Swal.fire({
-    icon: "success",
-    title: data,
-    text: `El producto ha sido agregado`,
-    confirmButtonText: "Aceptar",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      location.reload();
+        Swal.fire({
+          icon: "success",
+          title: successMessage,
+          text: `Mensaje del usuario ${user} enviado con exito`,
+          confirmButtonText: "Aceptar",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            location.reload();
+          }
+        });
+        userInputElement.value = "";
+        messageInputElement.value = "";
+      } else {
+        console.error("Error en el envio del mensaje");
+      }
+    } catch (error) {
+      console.error("Error de conexión:", error);
     }
   });
-});
