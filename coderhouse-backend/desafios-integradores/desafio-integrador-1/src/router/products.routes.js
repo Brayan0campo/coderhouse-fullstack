@@ -1,59 +1,61 @@
 import { Router } from "express";
-import { cartsModel } from "../models/carts.model.js";
+import { productsModel } from "../models/products.model.js";
 
-const cartRouter = Router();
+const productRouter = Router();
 
-cartRouter.get("/", async (req, res) => {
+productRouter.get("/", async (req, res) => {
   try {
-    const carts = await cartsModel.find();
-    res.send({ result: "success", payload: carts });
+    const products = await productsModel.find();
+    res.send({ result: "success", payload: products });
   } catch (error) {
     console.log(error);
   }
 });
 
-cartRouter.post("/", async (req, res) => {
-  const { title, description, quantity, total } = req.body;
+productRouter.post("/", async (req, res) => {
+  const { title, description, category, price, stock } = req.body;
 
-  if (!title || !description || !quantity || !total) {
+  if (!title || !description || !category || !price || !stock) {
     res
       .status(400)
       .send({ result: "error", message: "All fields are required" });
   }
 
-  const result = await cartsModel.create({
+  const result = await productsModel.create({
     title,
     description,
-    quantity,
-    total,
+    category,
+    price,
+    stock,
   });
 
   res.send({ result: "success", payload: result });
 });
 
-cartRouter.put("/:id", async (req, res) => {
+productRouter.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const updateCart = req.body;
+  const updateProduct = req.body;
 
   if (
-    !updateCart.title ||
-    !updateCart.description ||
-    !updateCart.quantity ||
-    !updateCart.total
+    !updateProduct.title ||
+    !updateProduct.description ||
+    !updateProduct.category ||
+    !updateProduct.price ||
+    !updateProduct.stock
   ) {
     res
       .status(400)
       .send({ result: "error", message: "All fields are required" });
   }
 
-  const result = await cartsModel.updateOne({ _id: id }, updateCart);
+  const result = await productsModel.updateOne({ _id: id }, updateProduct);
   res.send({ result: "success", payload: result });
 });
 
-cartRouter.delete("/:id", async (req, res) => {
+productRouter.delete("/:id", async (req, res) => {
   const { id } = req.params;
-  const result = await cartsModel.deleteOne({ _id: id });
+  const result = await productsModel.deleteOne({ _id: id });
   res.send({ result: "success", payload: result });
 });
 
-export default cartRouter;
+export default productRouter;
