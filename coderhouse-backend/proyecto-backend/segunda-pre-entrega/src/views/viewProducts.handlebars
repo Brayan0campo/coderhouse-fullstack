@@ -1,0 +1,12 @@
+<div class="container">
+  <h1>Productos</h1>
+  <div class="products">
+    {{#each products}}
+      <div class="product">
+        <h2>{{this.description}}</h2>
+        <p>Precio: ${{this.price}}</p>
+        <a href="/api/products/{{this._id}}">Ver Detalle de Producto</a>
+      </div>
+    {{/each}}
+  </div>
+</div>
