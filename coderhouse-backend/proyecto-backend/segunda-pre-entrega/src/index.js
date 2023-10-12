@@ -1,7 +1,6 @@
 import * as path from "path";
 import express from "express";
 import mongoose from "mongoose";
-import { Server } from "socket.io";
 import __dirname from "./ultils.js";
 import { engine } from "express-handlebars";
 import cartRouter from "./router/cart.routes.js";
@@ -21,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/carts", cartRouter);
 app.use("/api/products", prodRouter);
 
-const httpServer = app.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Servidor express corriendo en ${PORT}`);
 });
 
