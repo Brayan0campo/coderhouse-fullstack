@@ -1,5 +1,3 @@
-import { nanoid } from "nanoid";
-import { promises as fs } from "fs";
 import { productsModel } from "../models/products.model.js";
 
 class ProductManager extends productsModel {
@@ -20,11 +18,9 @@ class ProductManager extends productsModel {
   async getProductById(id) {
     try {
       const product = await ProductManager.findById(id).lean();
-
       if (!product) {
         return "Product not found";
       }
-
       return product;
     } catch (error) {
       console.error("Error getting product by ID", error);
@@ -35,11 +31,9 @@ class ProductManager extends productsModel {
   async getProductsByLimit(limit) {
     try {
       const products = await ProductManager.find().limit(limit);
-
       if (products.length < limit) {
         limit = products.length;
       }
-
       return products;
     } catch (error) {
       throw error;
@@ -72,28 +66,28 @@ class ProductManager extends productsModel {
     }
   }
 
-  async getProductsBySort(order) {
+  async getProductsBySort(sort) {
     try {
-      const products = await productsModel.find({}).sort({ price: order });
+      const products = await productsModel.find({}).sort({ price: sort });
       return products;
     } catch (error) {
       throw error;
     }
   }
 
-  async getProductsAll(page = 1, limit = 10, category, available, order) {
+  async getProductsAll(page = 1, limit = 10, category, available, sort) {
     try {
       const filter = {};
       const initialIndex = (page - 1) * limit;
       const finalIndex = page * limit;
       const sortOption = {};
 
-      if (order === "asc") {
+      if (sort === "asc") {
         sortOption.price = 1;
-      } else if (order === "desc") {
+      } else if (sort === "desc") {
         sortOption.price = -1;
       } else {
-        throw new Error("Invalid order parameter");
+        throw new Error("Invalid sort parameter");
       }
 
       if (category != "") {
@@ -112,12 +106,12 @@ class ProductManager extends productsModel {
       const products = await query.exec();
       const totalProducts = await ProductManager.countDocuments(filter);
       const totalPages = Math.ceil(totalProducts / limit);
-      const previousPage = initialIndex > 0;
-      const nextPage = finalIndex < totalProducts;
-      const previousLink = previousPage
+      const hasPrevPage = initialIndex > 0;
+      const hasNextPage = finalIndex < totalProducts;
+      const prevLink = hasPrevPage
         ? `/api/products?page=${page - 1}&limit=${limit}`
         : null;
-      const nextLink = nextPage
+      const nextLink = hasNextPage
         ? `/api/products?page=${page + 1}&limit=${limit}`
         : null;
 
@@ -125,12 +119,12 @@ class ProductManager extends productsModel {
         status: "success",
         payload: products,
         totalPages: totalPages,
-        prevPage: previousPage ? page - 1 : null,
-        nextPage: nextPage ? page + 1 : null,
+        prevPage: hasPrevPage ? page - 1 : null,
+        nextPage: hasNextPage ? page + 1 : null,
         page: page,
-        previousPage: previousPage,
-        nextPage: nextPage,
-        previousLink: previousLink,
+        hasPrevPage: hasPrevPage,
+        hasNextPage: hasNextPage,
+        prevLink: prevLink,
         nextLink: nextLink,
       };
     } catch (error) {
@@ -155,11 +149,9 @@ class ProductManager extends productsModel {
   async updateProduct(productId, updateProduct) {
     try {
       const product = await ProductManager.findById(productId);
-
       if (!product) {
         return "Product not found";
       }
-
       product.set(updateProduct);
       await product.save();
       return "Product updated";
@@ -172,11 +164,9 @@ class ProductManager extends productsModel {
   async deleteProduct(productId) {
     try {
       const product = await ProductManager.findById(productId);
-
       if (!product) {
         return "Product not found";
       }
-
       await product.remove();
       return "Product deleted";
     } catch (error) {

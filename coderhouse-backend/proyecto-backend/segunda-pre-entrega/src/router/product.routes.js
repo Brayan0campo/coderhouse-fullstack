@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { Router } from "express";
 import ProductManager from "../controllers/ProductManager.js";
 
@@ -33,28 +32,24 @@ productRouter.get("/:id", async (req, res) => {
     const productDetails = await productManager.getProductById(productId);
     res.render("viewDetails", { product: productDetails });
   } catch (error) {
-    console.error("Error al obtener el producto:", error);
-    res.status(500).json({ error: "Error al obtener el producto" });
+    console.error("Error getting product:", error);
+    res.status(500).json({ error: "Error getting product" });
   }
 });
 
 productRouter.get("/limit/:limit", async (req, res) => {
   const limit = parseInt(req.params.limit);
-
   if (isNaN(limit) || limit <= 0) {
     limit = 10;
   }
-
   res.send(await productManager.getProductsByLimit(limit));
 });
 
 productRouter.get("/page/:page", async (req, res) => {
   const page = parseInt(req.params.page);
-
   if (isNaN(page) || page <= 0) {
     page = 1;
   }
-
   const productsByPage = 1;
   res.send(await productManager.getProductsByPage(page, productsByPage));
 });
@@ -66,7 +61,6 @@ productRouter.get("/find/query", async (req, res) => {
 
 productRouter.get("/order/sort", async (req, res) => {
   const order = 0;
-
   if (req.query.sort) {
     if (req.query.sort === "desc") {
       order = -1;
@@ -74,7 +68,6 @@ productRouter.get("/order/sort", async (req, res) => {
       order = 1;
     }
   }
-
   res.send(await productManager.getProductsBySort(order));
 });
 
