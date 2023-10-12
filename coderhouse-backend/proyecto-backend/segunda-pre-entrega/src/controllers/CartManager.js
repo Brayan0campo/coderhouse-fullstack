@@ -1,9 +1,4 @@
-import { nanoid } from "nanoid";
-import { promises as fs } from "fs";
 import { cartsModel } from "../models/carts.model.js";
-import ProductManager from "./ProductManager.js";
-
-const productManager = new ProductManager();
 
 class CartManager extends cartsModel {
   constructor() {
@@ -27,11 +22,9 @@ class CartManager extends cartsModel {
   async getCartById(id) {
     try {
       const cart = await cartsModel.findById(id);
-
       if (!cart) {
         return "Cart not found";
       }
-
       return cart;
     } catch (error) {
       console.error("Error getting cart", error);
@@ -45,11 +38,9 @@ class CartManager extends cartsModel {
         .findById(cartId)
         .populate("products.productId")
         .lean();
-
       if (!cart) {
         return "Cart not found";
       }
-
       return cart;
     } catch (error) {
       console.error("Error getting cart", error);

@@ -5,7 +5,7 @@ const cartRouter = Router();
 const cartManager = new CartManager();
 
 cartRouter.get("/", async (req, res) => {
-  res.send(await cartManager.getCart());
+  res.send(await cartManager.getCarts());
 });
 
 cartRouter.get("/population/:cid", async (req, res) => {
@@ -31,7 +31,7 @@ cartRouter.post("/:cid/products/:pid", async (req, res) => {
 cartRouter.put("/:cid", async (req, res) => {
   const cartId = req.params.cid;
   const updateCart = req.body;
-  res.send(await cartManager.updateCart(cartId, updateCart));
+  res.send(await cartManager.updateProductsInCart(cartId, updateCart));
 });
 
 cartRouter.put("/:cid/products/:pid", async (req, res) => {
@@ -45,7 +45,7 @@ cartRouter.put("/:cid/products/:pid", async (req, res) => {
 
 cartRouter.delete("/:cid", async (req, res) => {
   const cartId = req.params.cid;
-  res.send(await cartManager.deleteCart(cartId));
+  res.send(await cartManager.deleteProductsInCart(cartId));
 });
 
 cartRouter.delete("/:cid/products/:pid", async (req, res) => {
