@@ -5,9 +5,9 @@ const productRouter = Router();
 const productManager = new ProductManager();
 
 productRouter.get("/", async (req, res) => {
-  const sort = req.query.sort;
-  const category = req.query.category;
-  const available = req.query.available;
+  let sort = req.query.sort;
+  let category = req.query.category;
+  let available = req.query.available;
 
   if (sort === undefined) {
     sort = "asc";
@@ -60,7 +60,7 @@ productRouter.get("/find/query", async (req, res) => {
 });
 
 productRouter.get("/order/sort", async (req, res) => {
-  const order = 0;
+  let order = 0;
   if (req.query.sort) {
     if (req.query.sort === "desc") {
       order = -1;

@@ -54,7 +54,7 @@ app.get("/products", async (req, res) => {
 app.get("/carts/:cid", async (req, res) => {
   let id = req.params.cid;
   let allCarts = await cart.getCartWithProducts(id);
-  res.render("viewCart", {
+  res.render("viewCarts", {
     title: "Seccion de Carritos",
     carts: allCarts,
   });
