@@ -1,7 +1,6 @@
 import * as path from "path";
 import express from "express";
 import mongoose from "mongoose";
-import { Server } from "socket.io";
 import __dirname from "./ultils.js";
 import session from "express-session";
 import MongoStore from "connect-mongo";
@@ -112,7 +111,7 @@ app.get("/profile", (req, res) => {
   res.render("profile", {
     title: "Profile",
     firstName: req.session.firstName,
-    lastName: req.session.lastName, 
+    lastName: req.session.lastName,
     email: req.session.emailUser,
     user: req.session.roleUser,
   });
