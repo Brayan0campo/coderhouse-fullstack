@@ -32,11 +32,11 @@ userRouter.post("/login", async (req, res) => {
         req.session.emailUser = email;
         req.session.firstName = data.firstName;
         req.session.lastName = data.lastName;
-        req.session.roleUser = data.user;
+        req.session.roleUser = data.role;
         res.redirect("/profile");
       } else {
         req.session.emailUser = email;
-        req.session.roleUser = data.user;
+        req.session.roleUser = data.role;
         res.redirect("/products");
       }
     } else {

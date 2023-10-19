@@ -79,7 +79,7 @@ app.get("/products", async (req, res) => {
     title: "Products",
     products: products,
     email: req.session.emailUser,
-    user: req.session.roleUser,
+    role: req.session.roleUser,
   });
 });
 
@@ -113,6 +113,6 @@ app.get("/profile", (req, res) => {
     firstName: req.session.firstName,
     lastName: req.session.lastName,
     email: req.session.emailUser,
-    user: req.session.roleUser,
+    role: req.session.roleUser,
   });
 });
