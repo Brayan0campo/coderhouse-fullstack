@@ -1,6 +1,7 @@
 import * as path from "path";
 import express from "express";
 import mongoose from "mongoose";
+import passport from "passport";
 import __dirname from "./ultils.js";
 import session from "express-session";
 import MongoStore from "connect-mongo";
@@ -11,6 +12,7 @@ import userRouter from "./router/user.routes.js";
 import prodRouter from "./router/product.routes.js";
 import CartManager from "./controllers/CartManager.js";
 import ProductManager from "./controllers/ProductManager.js";
+import initializePassport from "./config/passport.config.js";
 
 // Express
 const PORT = 8080;
@@ -56,6 +58,11 @@ app.use(
   })
 );
 
+// Passport
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Routes
 app.use("/api/carts", cartRouter);
 app.use("/api/products", prodRouter);
@@ -68,6 +75,12 @@ app.set("view engine", "handlebars");
 app.set("views", path.resolve(__dirname + "/views"));
 
 app.use("/", express.static(__dirname + "/public"));
+
+app.get("/", async (req, res) => {
+  if (!req.session.emailUser) {
+    return res.redirect("/login");
+  }
+});
 
 app.get("/products", async (req, res) => {
   if (!req.session.emailUser) {
