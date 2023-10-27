@@ -5,14 +5,28 @@ class UserManager extends usersModel {
     super();
   }
 
-  async validateUser(param) {
+  async findUser(email) {
     try {
-      const user = await UserManager.findOne({ email: param });
-      if (!user) return "User not found";
+      const user = await UserManager.findOne(
+        { email },
+        { email: 1, firstName: 1, lastName: 1, password: 1, role: 1 }
+      );
+      if (!user) {
+        return "User not found";
+      }
       return user;
     } catch (error) {
-      console.error("Error validating user", error);
-      return "Error validating user";
+      console.error("Error finding user", error);
+      return "Error finding user";
+    }
+  }
+  async findEmail(param) {
+    try {
+      const user = await UserManager.findOne(param);
+      return user;
+    } catch (error) {
+      console.error("Error finding user", error);
+      return "Error finding user";
     }
   }
 
@@ -39,8 +53,8 @@ class UserManager extends usersModel {
 
   async createUser(user) {
     try {
-      await usersModel.create(user);
-      return "User created";
+      let createUser = await usersModel.create(user);
+      return createUser;
     } catch (error) {
       console.error("Error creating user", error);
       return "Error creating user";

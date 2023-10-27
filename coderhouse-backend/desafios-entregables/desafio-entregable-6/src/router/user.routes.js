@@ -1,15 +1,13 @@
-import express from "express";
 import passport from "passport";
 import { Router } from "express";
 import UserManager from "../controllers/UserManager.js";
-import { hashPassword, validatePassword } from "../utils/";
 
 const userRouter = Router();
 const userManager = new UserManager();
 
 userRouter.post(
   "/register",
-  passport.authenticate("register", { failureRedirect: "/fail-register" }),
+  passport.authenticate("register", { failureRedirect: "/failregister" }),
   async (req, res) => {
     try {
       const { firstName, lastName, email, age, password, role } = req.body;
@@ -23,13 +21,13 @@ userRouter.post(
   }
 );
 
-userRouter.get("/fail-register", async (req, res) => {
+userRouter.get("/failregister", async (req, res) => {
   res.send(error, "Error Registering User");
 });
 
 userRouter.post(
   "/login",
-  passport.authenticate("login", { failureRedirect: "/fail-login" }),
+  passport.authenticate("login", { failureRedirect: "/faillogin" }),
   async (req, res) => {
     try {
       if (!req.user) {
@@ -39,14 +37,14 @@ userRouter.post(
       }
 
       if (req.user.role === "admin") {
-        req.session.email = req.user.email;
+        req.session.emailUser = req.user.email;
         req.session.firstName = req.user.firstName;
         req.session.lastName = req.user.lastName;
-        req.session.role = req.user.role;
+        req.session.roleUser = req.user.role;
         res.redirect("/profile");
       } else {
-        req.session.email = req.user.email;
-        req.session.role = req.user.role;
+        req.session.emailUser = req.user.email;
+        req.session.roleUser = req.user.role;
         res.redirect("/products");
       }
     } catch (error) {
@@ -55,7 +53,7 @@ userRouter.post(
   }
 );
 
-userRouter.get("/fail-login", async (req, res) => {
+userRouter.get("/faillogin", async (req, res) => {
   res.send(error, "Error logging in");
 });
 
@@ -70,8 +68,8 @@ userRouter.get(
   passport.authenticate("github", { failureRedirect: "/login" }),
   async (req, res) => {
     req.session.user = req.user;
-    req.session.email = req.session.user.email;
-    req.session.role = req.session.user.role;
+    req.session.emailUser = req.session.user.email;
+    req.session.roleUser = req.session.user.role;
     res.redirect("/products");
   }
 );
