@@ -1,8 +1,6 @@
 import jwt from "passport-jwt";
 import passport from "passport";
-import local from "passport-local";
 
-const LocalStrategy = local.Strategy;
 const JwtStrategy = jwt.Strategy;
 const ExtractJwt = jwt.ExtractJwt;
 
