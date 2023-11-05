@@ -7,8 +7,21 @@ const userSchema = new mongoose.Schema({
   role: String,
   email: String,
   password: String,
-  firstName: String,
   lastName: String,
+  firstName: String,
+
+  cart: [
+    {
+      type: [
+        {
+          cart: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "carts",
+          },
+        },
+      ],
+    },
+  ],
 });
 
 export const usersModel = mongoose.model(usersCollection, userSchema);
