@@ -1,7 +1,7 @@
 import { productsModel } from "../models/products.model.js";
 
 export default class Product {
-  static async getAllProducts() {
+  getAllProducts = async () => {
     try {
       const products = await productsModel.find();
       return products;
@@ -9,9 +9,9 @@ export default class Product {
       console.log(error);
       return null;
     }
-  }
+  };
 
-  static async getProductById(productId) {
+  getProductById = async (productId) => {
     try {
       const product = await productsModel.findById(productId);
       return product;
@@ -19,9 +19,9 @@ export default class Product {
       console.log(error);
       return null;
     }
-  }
+  };
 
-  static async createProduct(productData) {
+  createProduct = async (productData) => {
     try {
       const newProduct = await productsModel.create(productData);
       return newProduct;
@@ -29,9 +29,9 @@ export default class Product {
       console.log(error);
       return null;
     }
-  }
+  };
 
-  static async updateProduct(productId, updatedProductData) {
+  updateProduct = async (productId, updatedProductData) => {
     try {
       const updatedProduct = await productsModel.findByIdAndUpdate(
         productId,
@@ -43,9 +43,9 @@ export default class Product {
       console.log(error);
       return null;
     }
-  }
+  };
 
-  static async deleteProduct(productId) {
+  deleteProduct = async (productId) => {
     try {
       const deletedProduct = await productsModel.findByIdAndDelete(productId);
       return deletedProduct;
@@ -53,5 +53,5 @@ export default class Product {
       console.log(error);
       return null;
     }
-  }
+  };
 }

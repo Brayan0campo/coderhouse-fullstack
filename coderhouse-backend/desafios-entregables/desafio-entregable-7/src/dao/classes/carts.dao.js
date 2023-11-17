@@ -1,7 +1,7 @@
 import { cartsModel } from "../models/carts.model.js";
 
 export default class Carts {
-  static async getCartById(cartId) {
+  getCartById = async (cartId) => {
     try {
       const cart = await cartsModel
         .findById(cartId)
@@ -11,9 +11,9 @@ export default class Carts {
       console.log(error);
       return null;
     }
-  }
+  };
 
-  static async createCart(products) {
+  createCart = async (products) => {
     try {
       const newCart = await cartsModel.create({ products });
       return newCart;
@@ -21,9 +21,9 @@ export default class Carts {
       console.log(error);
       return null;
     }
-  }
+  };
 
-  static async updateCart(cartId, updatedCartData) {
+  updateCart = async (cartId, updatedCartData) => {
     try {
       const updatedCart = await cartsModel.findByIdAndUpdate(
         cartId,
@@ -35,9 +35,9 @@ export default class Carts {
       console.log(error);
       return null;
     }
-  }
+  };
 
-  static async deleteCart(cartId) {
+  deleteCart = async (cartId) => {
     try {
       const deletedCart = await cartsModel.findByIdAndDelete(cartId);
       return deletedCart;
@@ -45,5 +45,5 @@ export default class Carts {
       console.log(error);
       return null;
     }
-  }
+  };
 }
