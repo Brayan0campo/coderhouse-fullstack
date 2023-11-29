@@ -14,25 +14,10 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Routes
 app.use("/api/users", usersRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
-
-// Mongoose
-mongoose
-  .connect(config.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("Successfully connected to the database");
-    app.listen(PORT, () => {
-      console.log(`Express server running on port ${PORT}`);
-    });
-  })
-  .catch((error) => {
-    console.error("Error connecting to the database, error: ", error);
-  });
 
 // Session Mongo
 app.use(
@@ -50,3 +35,19 @@ app.use(
     saveUninitialized: false,
   })
 );
+
+// Mongoose
+mongoose
+  .connect(config.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Successfully connected to the database");
+    app.listen(PORT, () => {
+      console.log(`Express server running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Error connecting to the database, error: ", error);
+  });
