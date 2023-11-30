@@ -1,39 +1,61 @@
-import UserDTO from "../dao/dtos/users.dto";
+import UserDTO from "../dao/dtos/users.dto.js";
 
 export default class UserRepository {
   constructor(dao) {
     this.dao = dao;
   }
 
-  async getAllUsers() {
-    const users = await this.dao.getAllUsers();
-    return users;
-  }
+  get = async () => {
+    try {
+      const users = await this.dao.get();
+      return users;
+    } catch (error) {
+      console.error("Error getting users: ", error);
+      return "Error getting users";
+    }
+  };
 
-  async getUserById(id) {
-    const user = await this.dao.getUserById(id);
-    return user;
-  }
+  getUser = async (id) => {
+    try {
+      const user = await this.dao.getUser(id);
+      if (!user) {
+        return { error: "User not found" };
+      }
+      return user;
+    } catch (error) {
+      console.error("Error getting user: ", error);
+      return "Error getting user";
+    }
+  };
 
-  async getUserByEmail(email) {
-    const user = await this.dao.getUserByEmail(email);
-    return user;
-  }
+  createUser = async (user) => {
+    try {
+      const newUser = await UserDTO(user);
+      const createdUser = await this.dao.createUser(newUser);
+      return createdUser;
+    } catch (error) {
+      console.error("Error creating user: ", error);
+      return "Error creating user";
+    }
+  };
 
-  async createUser(user) {
-    const userDTO = new UserDTO(user);
-    const newUser = await this.dao.createUser(userDTO);
-    return newUser;
-  }
+  updateUser = async (id, user) => {
+    try {
+      const updatedUser = await this.dao.updateUser(id, user);
+      return updatedUser;
+    } catch (error) {
+      console.error("Error updating user: ", error);
+      return "Error updating user";
+    }
+  };
 
-  async updateUser(id, user) {
-    const userDTO = new UserDTO(user);
-    const updatedUser = await this.dao.updateUser(id, userDTO);
-    return updatedUser;
-  }
-
-  async deleteUser(id) {
-    const deletedUser = await this.dao.deleteUser(id);
-    return deletedUser;
-  }
+  deleteUser = async (id) => {
+    try {
+      const deletedUser = await this.dao.deleteUser(id);
+      return deletedUser;
+    } catch (error) {
+      console.error("Error deleting user: ", error);
+      return "Error deleting user";
+    }
+  };
 }

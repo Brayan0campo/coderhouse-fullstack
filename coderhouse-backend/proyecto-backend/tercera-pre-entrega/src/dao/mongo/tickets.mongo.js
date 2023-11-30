@@ -7,17 +7,9 @@ export default class TicketsMongo {
     try {
       const tickets = await ticketsModel.find();
       return tickets;
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  getById = async (id) => {
-    try {
-      const ticket = await ticketsModel.findById(id);
-      return ticket;
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.error("Error getting tickets: ", error);
+      return "Error getting tickets";
     }
   };
 
@@ -25,28 +17,9 @@ export default class TicketsMongo {
     try {
       const ticket = await ticketsModel.create(newTicket);
       return ticket;
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  updateTicket = async (id, ticket) => {
-    try {
-      const updatedTicket = await ticketsModel.findByIdAndUpdate(id, ticket, {
-        new: true,
-      });
-      return updatedTicket;
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  deleteTicket = async (id) => {
-    try {
-      const deletedTicket = await ticketsModel.findByIdAndDelete(id);
-      return deletedTicket;
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.error("Error creating ticket: ", error);
+      return "Error creating ticket";
     }
   };
 }

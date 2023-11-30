@@ -1,12 +1,61 @@
 import express from "express";
+import UserDTO from "../dao/DTOs/users.dto.js";
+import Users from "../dao/mongo/users.mongo.js";
+import { usersServices } from "../repositories/index.js";
 
-
+const usersMongo = new Users();
 const router = express.Router();
 
-router.get("/", getUsers);
-router.get("/:uid", getUserById);
-router.post("/", createUser);
-router.put("/:uid", updateUser);
-router.delete("/:uid", deleteUserById);
+router.get("/", async (req, res) => {
+  try {
+    const users = await usersMongo.get();
+    res.send({ status: "success", payload: users });
+  } catch (error) {
+    res.send({ status: "error", payload: error });
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await usersMongo.getUser(id);
+    res.send({ status: "success", payload: user });
+  } catch (error) {
+    res.send({ status: "error", payload: error });
+  }
+});
+
+router.post("/", async (req, res) => {
+  try {
+    const { firstName, lastName, email, age, role, password } = req.body;
+    const user = new UserDTO(firstName, lastName, email, age, role, password);
+    const createdUser = await usersServices.create(user);
+    res.send({ status: "success", payload: createdUser });
+  } catch (error) {
+    res.send({ status: "error", payload: error });
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { firstName, lastName, email, age, role, password } = req.body;
+    const user = new UserDTO(firstName, lastName, email, age, role, password);
+    const updatedUser = await usersServices.update(id, user);
+    res.send({ status: "success", payload: updatedUser });
+  } catch (error) {
+    res.send({ status: "error", payload: error });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedUser = await usersServices.delete(id);
+    res.send({ status: "success", payload: deletedUser });
+  } catch (error) {
+    res.send({ status: "error", payload: error });
+  }
+});
 
 export default router;

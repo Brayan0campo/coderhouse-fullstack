@@ -1,5 +1,5 @@
 {
-  "name": "restructuring",
+  "name": "tercerapreentrega",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -15,6 +15,7 @@
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "express-handlebars": "^7.1.2",
     "express-session": "^1.17.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.6.2",
@@ -23,7 +24,8 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
-    "socket.io": "^4.7.2"
+    "socket.io": "^4.7.2",
+    "sweetalert2": "^11.10.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

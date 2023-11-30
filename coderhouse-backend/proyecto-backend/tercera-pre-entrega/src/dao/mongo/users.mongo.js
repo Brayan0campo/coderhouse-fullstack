@@ -7,26 +7,39 @@ export default class UsersMongo {
     try {
       const users = await usersModel.find();
       return users;
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.error("Error getting users: ", error);
+      return "Error getting users";
     }
   };
 
-  getById = async (id) => {
+  findByEmail = async (param) => {
     try {
-      const user = await usersModel.findById(id);
+      const user = await usersModel.findOne(param);
       return user;
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.error("Error finding user: ", error);
+      return "Error finding user";
+    }
+  };
+
+  findByJWT = async (filter) => {
+    try {
+      const user = await usersModel.find(filter);
+      return user;
+    } catch (error) {
+      console.error("Error finding user: ", error);
+      return "Error finding user";
     }
   };
 
   createUser = async (newUser) => {
     try {
-      const User = await usersModel.create(newUser);
-      return User;
-    } catch (err) {
-      console.log(err);
+      const user = await usersModel.create(newUser);
+      return user;
+    } catch (error) {
+      console.error("Error creating user: ", error);
+      return "Error creating user";
     }
   };
 
@@ -36,8 +49,9 @@ export default class UsersMongo {
         new: true,
       });
       return updatedUser;
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.error("Error updating user: ", error);
+      return "Error updating user";
     }
   };
 
@@ -45,8 +59,9 @@ export default class UsersMongo {
     try {
       const deletedUser = await usersModel.findByIdAndDelete(id);
       return deletedUser;
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.error("Error deleting user: ", error);
+      return "Error deleting user";
     }
   };
 }
