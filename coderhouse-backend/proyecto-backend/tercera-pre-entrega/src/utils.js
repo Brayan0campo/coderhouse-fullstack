@@ -1,4 +1,5 @@
 import path from "path";
+import config from "./config/config.js";
 import passport from "passport";
 import nodemailer from "nodemailer";
 import { fileURLToPath } from "url";
@@ -33,8 +34,8 @@ export const roleAuth = (role) => {
 export const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: config.EMAIL_USER,
+    pass: config.EMAIL_PASS,
   },
 });
 

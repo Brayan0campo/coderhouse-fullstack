@@ -1,4 +1,4 @@
-import usersModel from "./models/users.model.js";
+import { usersModel } from "./models/users.model.js";
 
 export default class UsersMongo {
   constructor() {}
@@ -10,6 +10,16 @@ export default class UsersMongo {
     } catch (error) {
       console.error("Error getting users: ", error);
       return "Error getting users";
+    }
+  };
+
+  getById = async (id) => {
+    try {
+      const user = await usersModel.findById(id);
+      return user;
+    } catch (error) {
+      console.error("Error getting user: ", error);
+      return "Error getting user";
     }
   };
 

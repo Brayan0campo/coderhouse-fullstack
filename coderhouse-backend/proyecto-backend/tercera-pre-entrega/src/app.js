@@ -6,7 +6,7 @@ import { Server } from "socket.io";
 import config from "./config/config.js";
 import cookieParser from "cookie-parser";
 import { engine } from "express-handlebars";
-import UserDTO from "./dao/DTOs/user.dto.js";
+import UserDTO from "./dao/DTOs/users.dto.js";
 import { signToken } from "./jwt/sign.token.js";
 import cartsRouter from "./routes/carts.router.js";
 import usersRouter from "./routes/users.router.js";
@@ -127,21 +127,21 @@ app.get(
   (req, res) => {
     roleAuth("user")(req, res, async () => {
       const allProducts = await productsMongo.get();
-      res.render("home", { products: allProducts });
+      res.render("userHome", { products: allProducts });
     });
   }
 );
 
-app.get("/admin", passportAuth("jwt"), roleAuth("user"), (req, res) => {
-  roleAuth("user")(req, res, async () => {
+app.get("/admin", passportAuth("jwt"), roleAuth("admin"), (req, res) => {
+  roleAuth("admin")(req, res, async () => {
     const allProducts = await productsMongo.get();
-    res.render("admin", { products: allProducts });
+    res.render("adminHome", { products: allProducts });
   });
 });
 
 app.post("/login", async (req, res) => {
-  const emailFound = email;
   const { email, password } = req.body;
+  const emailFound = email;
   const user = await usersMongo.findByEmail({ email: emailFound });
 
   if (!user || user.password !== password) {
@@ -159,8 +159,8 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/api/register", async (req, res) => {
-  const emailFound = email;
   const { firstName, lastName, email, age, password, role } = req.body;
+  const emailFound = email;
   const user = await usersMongo.findByEmail({ email: emailFound });
 
   if (user) return res.status(400).send({ message: "Email already exists." });

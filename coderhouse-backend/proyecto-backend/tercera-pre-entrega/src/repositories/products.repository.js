@@ -1,5 +1,3 @@
-import ProductDTO from "../dao/dtos/products.dto.js";
-
 export default class ProductRepository {
   constructor(dao) {
     this.dao = dao;
@@ -30,12 +28,11 @@ export default class ProductRepository {
 
   createProduct = async (product) => {
     try {
-      const newProduct = await ProductDTO(product);
-      const createdProduct = await this.dao.createProduct(newProduct);
+      const createdProduct = await this.dao.createProduct(product);
       return createdProduct;
     } catch (error) {
       console.error("Error creating product: ", error);
-      return "Error creating product";
+      throw new Error("Error creating product");
     }
   };
 

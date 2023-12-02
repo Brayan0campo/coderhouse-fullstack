@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register page</title>
+  </head>
+  <body>
+    <form id="register-form">
+      <label for="firtsName">First name</label>
+      <input type="text" name="firtsName" id="firtsName" />
+
+      <label for="lastName">Last name</label>
+      <input type="text" name="lastName" id="lastName" />
+
+      <label for="email">Email</label>
+      <input type="email" name="email" id="email" />
+
+      <label for="age">Age</label>
+      <input type="number" name="age" id="age" />
+
+      <label for="password">Password</label>
+      <input type="password" name="password" id="password" />
+
+      <label for="role">Role</label>
+      <select name="role" id="role">
+        <option value="admin">Admin</option>
+        <option value="user">user</option>
+      </select>
+
+      <button type="submit">Register</button>
+    </form>
+    <a href="/">Back</a>
+    <script src="/register.js"></script>
+  </body>
+</html>

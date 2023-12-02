@@ -1,5 +1,5 @@
-import cartsModel from "./models/carts.model.js";
-import productsModel from "./models/products.model.js";
+import { cartsModel } from "./models/carts.model.js";
+import { productsModel } from "./models/products.model.js";
 
 export default class CartsMongo {
   constructor() {}
@@ -100,7 +100,7 @@ export default class CartsMongo {
 
   updateCart = async (id, cart) => {
     try {
-      const updatedCart = await cartsModel.findByIdAndUpdate(id, cart, {
+      const updatedCart = await cartsModel.findById(id, cart, {
         new: true,
       });
       if (!updatedCart) {

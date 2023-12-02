@@ -1,5 +1,3 @@
-import CartDTO from "../dao/dtos/carts.dto.js";
-
 export default class CartRepository {
   constructor(dao) {
     this.dao = dao;
@@ -48,9 +46,8 @@ export default class CartRepository {
     }
   };
 
-  createCart = async (cart) => {
+  createCart = async (newCart) => {
     try {
-      const newCart = await CartDTO(cart);
       const createdCart = await this.dao.createCart(newCart);
       return createdCart;
     } catch (error) {

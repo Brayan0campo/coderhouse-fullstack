@@ -1,5 +1,3 @@
-import UserDTO from "../dao/dtos/users.dto.js";
-
 export default class UserRepository {
   constructor(dao) {
     this.dao = dao;
@@ -28,9 +26,8 @@ export default class UserRepository {
     }
   };
 
-  createUser = async (user) => {
+  createUser = async (newUser) => {
     try {
-      const newUser = await UserDTO(user);
       const createdUser = await this.dao.createUser(newUser);
       return createdUser;
     } catch (error) {

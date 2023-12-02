@@ -1,9 +1,9 @@
 export default class ProductDTO {
-  constructor(product) {
-    this.description = product.description;
-    this.available = product.available;
-    this.category = product.category;
-    this.price = product.price;
-    this.stock = product.stock;
+  constructor(description, category, price, stock, available) {
+    this.description = description;
+    this.category = category;
+    this.price = price;
+    this.stock = stock;
+    this.available = available;
   }
 }

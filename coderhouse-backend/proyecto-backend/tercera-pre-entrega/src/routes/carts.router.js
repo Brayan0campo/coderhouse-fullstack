@@ -66,7 +66,7 @@ router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { products } = req.body;
   try {
-    const cart = await cartsMongo.update(id, products);
+    const cart = await cartsMongo.updateCart(id, products);
     res.send({ status: "success", payload: cart });
   } catch (error) {
     res.send({ status: "error", payload: error });
@@ -76,7 +76,7 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const cart = await cartsMongo.delete(id);
+    const cart = await cartsMongo.deleteCart(id);
     res.send({ status: "success", payload: cart });
   } catch (error) {
     res.send({ status: "error", payload: error });
