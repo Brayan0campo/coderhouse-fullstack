@@ -1,0 +1,118 @@
+<h1>Admin Home</h1>
+<div class="container">
+  <button id="logout">Logout</button>
+  <div class="info-product">
+    <h1>List of products</h1>
+    <div class="detail-product">
+      <div id="product.container">
+        <ul>
+          {{#each products}}
+            <li
+              data-description="{{this.description}}"
+              data-price="{{this.price}}"
+              data-stock="{{this.stock}}"
+              data-category="{{this.category}}"
+              data-available="{{this.available}}"
+              data-id="{{this._id}}"
+            >
+              <strong>{{this.description}}</strong><br />
+              Price: ${{this.price}}<br />
+              Stock:
+              {{this.stock}}<br />
+              Category:
+              {{this.category}}<br />
+              Available:
+              {{this.available}}<br />
+              ID:{{this._id}}<br />
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="form">
+    <h1>Form products</h1>
+    <form id="product-form">
+      <input type="hidden" id="id-product" name="productId" />
+      <div class="inputs">
+        <div>
+          <input
+            type="text"
+            id="description"
+            autocomplete="off"
+            placeholder="Enter description"
+            required
+          />
+          <input
+            type="number"
+            id="price"
+            autocomplete="off"
+            placeholder="Enter price"
+            required
+          />
+        </div>
+        <div>
+          <input
+            type="number"
+            id="stock"
+            autocomplete="off"
+            placeholder="Enter stock"
+            required
+          />
+          <input
+            type="text"
+            id="category"
+            autocomplete="off"
+            placeholder="Enter category"
+            required
+          />
+          <select name="available" id="available">
+            <option value="in_stock" selected="true">Whith Stock</option>
+            <option value="out_stock">Whithout Stock</option>
+          </select>
+        </div>
+      </div>
+      <div class="button">
+        <button type="submit" id="button-save">Save</button>
+        <input type="checkbox" id="delete-product" name="eliminarProducto" />
+        <label for="delete-product">Delete</label>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+document.getElementById('logout').addEventListener('click', cerrarSesion);
+    function cerrarSesion() {
+        localStorage.removeItem("token");
+        window.location.href = '/';
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+        const productsList = document.getElementById("product-container");
+        const descInput = document.getElementById("description");
+        const priceInput = document.getElementById("price");
+        const stockInput = document.getElementById("stock");
+        const catInput = document.getElementById("category");
+        const idInput = document.getElementById("productId");
+
+        productsList.addEventListener("click", function (event) {
+            const clickedElement = event.target;
+            if (clickedElement.tagName === "LI") {
+                const description = clickedElement.getAttribute("data-description");
+                const price = clickedElement.getAttribute("data-price");
+                const stock = clickedElement.getAttribute("data-stock");
+                const category = clickedElement.getAttribute("data-category");
+                const productId = clickedElement.getAttribute("data-id");
+
+                descInput.value = description;
+                imgInput.value = image;
+                priceInput.value = price;
+                stockInput.value = stock;
+                catInput.value = category;
+                idInput.value = productId;
+            }
+        });
+    });
+</script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/realTimeProducts.js"></script>
