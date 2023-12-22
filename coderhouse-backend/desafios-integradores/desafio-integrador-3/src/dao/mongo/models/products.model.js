@@ -8,6 +8,7 @@ const productsSchema = new mongoose.Schema({
   price: { type: Number },
   stock: { type: Number },
   available: { type: String, enum: ["in_stock", "out_of_stock"] },
+  owner: { type: String},
 });
 
 export const productsModel = mongoose.model(productsCollection, productsSchema);

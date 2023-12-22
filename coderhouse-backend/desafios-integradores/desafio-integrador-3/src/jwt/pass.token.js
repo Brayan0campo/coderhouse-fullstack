@@ -17,5 +17,5 @@ export function verifyResetToken(resetToken) {
 }
 
 export function validatePassword(oldPassword, newPassword) {
-  return oldPassword !== newPassword;
+  return oldPassword === newPassword;
 }

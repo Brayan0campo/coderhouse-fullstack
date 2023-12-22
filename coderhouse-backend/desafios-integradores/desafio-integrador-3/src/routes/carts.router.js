@@ -2,6 +2,7 @@ import express from "express";
 import { logger } from "../logger.js";
 import CartsDTO from "../dao/DTOs/carts.dto.js";
 import Carts from "../dao/mongo/carts.mongo.js";
+import Users from "../dao/mongo/users.mongo.js";
 import TicketsDTO from "../dao/DTOs/tickets.dto.js";
 import { cartsServices, ticketsServices } from "../repositories/index.js";
 
@@ -33,7 +34,19 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const { products } = req.body;
+    const { products, user } = req.body;
+    const productOwner = products.find(
+      (product) => product.owner === user.email
+    );
+
+    if (user.role === "premiun" && productOwner) {
+      logger.error("A premium user cannot add their own product to the cart.");
+      return res.send({
+        status: "error",
+        payload: "A premium user cannot add their own product to the cart.",
+      });
+    }
+
     const cart = new CartsDTO({ products });
     const createdCart = await cartsServices.createCart(cart);
     logger.info("Cart created successfully");

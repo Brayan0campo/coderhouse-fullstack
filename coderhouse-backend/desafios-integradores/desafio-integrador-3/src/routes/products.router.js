@@ -6,6 +6,7 @@ import { productsServices } from "../repositories/index.js";
 import Errors from "../services/custom-errors/errors.enum.js";
 import CustomError from "../services/custom-errors/errors.customs.js";
 import * as ErrorMessages from "../services/custom-errors/errors.info.js";
+import e from "express";
 
 const productsMongo = new Products();
 const router = express.Router();
@@ -36,13 +37,18 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const { description, category, price, stock, available } = req.body;
+
+    const owner = req.body.owner || "admin";
+
     const product = new ProductsDTO(
       description,
       category,
       price,
       stock,
-      available
+      available,
+      owner
     );
+
     const createdProduct = await productsServices.createProduct(product);
     logger.info("Product created successfully");
     res.send({ status: "success", payload: createdProduct });
@@ -73,9 +79,30 @@ router.put("/:id", async (req, res) => {
       stock,
       available
     );
-    const updatedProduct = await productsServices.updateProduct(id, product);
-    logger.info("Product updated successfully");
-    res.send({ status: "success", payload: updatedProduct });
+
+    const userRole = req.user.role;
+    const existingProduct = await productsMongo.getProduct(id);
+
+    if (!existingProduct) {
+      return res
+        .status(404)
+        .send({ status: "error", payload: "Product not found" });
+    }
+
+    if (
+      userRole === "admin" ||
+      (userRole === "premium" && existingProduct.owner === req.user.email)
+    ) {
+      const updatedProduct = await productsServices.updateProduct(id, product);
+      logger.info("Product updated successfully");
+      res.send({ status: "success", payload: updatedProduct });
+    } else {
+      logger.error("Unauthorized user for product update");
+      res.status(403).send({
+        status: "error",
+        payload: "Unauthorized user for product update",
+      });
+    }
   } catch (error) {
     if (error.name === "Error" && error.code === Errors.REQUIRED_DATA.code) {
       const errorMessage = ErrorMessages.updateProductError(
@@ -98,9 +125,30 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedProduct = await productsServices.deleteProduct(id);
-    logger.info("Product deleted successfully");
-    res.send({ status: "success", payload: deletedProduct });
+
+    const userRole = req.user.role;
+    const existingProduct = await productsMongo.getProduct(id);
+
+    if (!existingProduct) {
+      return res
+        .status(404)
+        .send({ status: "error", payload: "Product not found" });
+    }
+
+    if (
+      userRole === "admin" ||
+      (userRole === "premium" && existingProduct.owner === req.user.email)
+    ) {
+      const deletedProduct = await productsServices.deleteProduct(id);
+      logger.info("Product deleted successfully");
+      res.send({ status: "success", payload: deletedProduct });
+    } else {
+      logger.error("Unauthorized user for product deletion");
+      res.status(403).send({
+        status: "error",
+        payload: "Unauthorized user for product deletion",
+      });
+    }
   } catch (error) {
     if (error.name === "Error" && error.code === Errors.DATABASE_ERROR.code) {
       const errorMessage = ErrorMessages.deleteProductError(req.params.id);

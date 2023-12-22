@@ -20,6 +20,10 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
       window.location.href = "/current";
     }
   } else {
+    Swal.fire({
+      icon: "error",
+      text: "Email or password incorrect",
+    });
     console.error("Error in login");
   }
 });

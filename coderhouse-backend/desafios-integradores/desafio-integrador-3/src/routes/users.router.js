@@ -130,6 +130,29 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+router.put("/premium/:uid", async (req, res) => {
+  const { uid } = req.params;
+  const { role } = req.body;
+
+  try {
+    const user = await usersMongo.getById(uid);
+
+    if (!user) {
+      logger.error("User not found");
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    user.role = role;
+    const updatedUser = await usersServices.updateUser(uid, user);
+
+    logger.info("User role updated successfully");
+    res.send({ status: "success", payload: updatedUser });
+  } catch (error) {
+    logger.error("Error updating user role");
+    res.status(500).send({ status: "error", payload: error });
+  }
+});
+
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;

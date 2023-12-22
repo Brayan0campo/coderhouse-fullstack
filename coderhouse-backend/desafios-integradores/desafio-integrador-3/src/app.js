@@ -157,8 +157,7 @@ app.post("/login", async (req, res) => {
   try {
     const token = signToken(res, email, password);
     const userDTO = new UserDTO(user);
-    const allProducts = await productsMongo.get();
-    res.json({ token, user: userDTO, allProducts });
+    res.json({ token, user: userDTO });
     logger.info("User logged successfully.");
   } catch (error) {
     logger.error("Internal server error." + error.message);
@@ -179,7 +178,9 @@ app.get("/reset-password/:token", async (req, res) => {
     const user = await usersMongo.findByResetToken(token);
     if (!user || user.resetPasswordExpires < Date.now()) {
       logger.error("Token expired.");
-      return res.render("resetPasswordExpired");
+      return res.sendFile("forgotPassword.html", {
+        root: __dirname + "/views",
+      });
     }
 
     res.sendFile("resetPassword.html", { root: __dirname + "/views" });
