@@ -1,0 +1,166 @@
+paths:
+  /products:
+    get:
+      summary: "Retrieve all products"
+      tags:
+        - Products
+      responses:
+        "200":
+          description: "Successful request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              example:
+                status: error
+                payload:
+                  message: "error retrieving products"
+    post:
+      summary: "Create a new product"
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              description: "Product A"
+              category: "Electronics"
+              price: 499.99
+              stock: 50
+              available: "in_stock"
+              owner: ""
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              example:
+                status: error
+                payload:
+                  message: "error creating product"
+  /products/{id}:
+    get:
+      summary: Retrieve a product by ID
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              example:
+                status: error
+                payload:
+                  message: "error retrieving product"
+    put:
+      summary: Update a product
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              example:
+                status: error
+                payload:
+                  message: "error updating product"
+    delete:
+      summary: Delete a product
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              example:
+                status: error
+                payload:
+                  message: "error deleting product"
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Product description"
+        category:
+          type: string
+          description: "Product category"
+        price:
+          type: number
+          description: "Product price"
+        stock:
+          type: number
+          description: "Product stock"
+        available:
+          type: string
+          description: "Product availability"
+        owner:
+          type: string
+          description: "Product owner"
+      required:
+        - description
+        - category
+        - price
+        - stock
+        - available
+        - owner
