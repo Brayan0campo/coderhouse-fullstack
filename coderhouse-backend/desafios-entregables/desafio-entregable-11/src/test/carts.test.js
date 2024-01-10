@@ -42,7 +42,7 @@ describe("Testing Carts", () => {
     try {
       const products = [
         {
-          description: "Iphone 12",
+          description: "Portatil",
           stock: 10,
         },
       ];
@@ -59,6 +59,12 @@ describe("Testing Carts", () => {
       const products = [
         {
           description: "Iphone 12",
+          price: 500,
+          stock: 10,
+        },
+        {
+          description: "Portatil",
+          price: 500,
           stock: 10,
         },
       ];
@@ -76,14 +82,14 @@ describe("Testing Carts", () => {
       let cartAdd = {
         products: [
           {
-            productId: "656ab0d021e9ae67c5323ae2",
+            productId: "659e1f99ecd19459ed08cf13",
             quantity: 2,
           },
         ],
       };
       const cart = await request.post("/carts").send(cartAdd);
       assert.strictEqual(cart.status, 200);
-      expect(response.ok).to.equal(true);
+      expect(cart.ok).to.equal(true);
       expect(cart.body).to.have.property("status", "success");
     } catch (error) {
       assert.fail(error.message);
