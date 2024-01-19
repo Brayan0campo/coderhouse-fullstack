@@ -3,13 +3,14 @@ import express from "express";
 import mongoose from "mongoose";
 import passport from "passport";
 import { Server } from "socket.io";
+import { middleware } from "./middleware.js";
 import { logger } from "./logger.js";
 import bodyParser from "body-parser";
-import { faker, tr } from "@faker-js/faker";
 import config from "./config/config.js";
 import swaggerJSDoc from "swagger-jsdoc";
 import cookieParser from "cookie-parser";
 import { engine } from "express-handlebars";
+import { faker, tr } from "@faker-js/faker";
 import UserDTO from "./dao/DTOs/users.dto.js";
 import compression from "express-compression";
 import swaggerUIExpress from "swagger-ui-express";
@@ -104,7 +105,7 @@ app.engine("handlebars", engine());
 
 initializePassport();
 app.use(passport.initialize());
-app.use(logger);
+app.use(middleware);
 
 const server = app.listen(PORT, () => {
   logger.info(`Server listening on port ${PORT}`);
