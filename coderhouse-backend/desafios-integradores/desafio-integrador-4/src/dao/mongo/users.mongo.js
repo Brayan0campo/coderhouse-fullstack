@@ -24,6 +24,20 @@ export default class UsersMongo {
     }
   };
 
+  getUserRole = async (email) => {
+    try {
+      const user = await usersModel.findOne({ email: email });
+
+      if (user && user.role === "premium") {
+        return "premium";
+      } else {
+        return "user not premium";
+      }
+    } catch (error) {
+      console.error("Error getting user role: ", error);
+    }
+  };
+
   findByResetToken = async (token) => {
     try {
       const user = await usersModel.findOne({

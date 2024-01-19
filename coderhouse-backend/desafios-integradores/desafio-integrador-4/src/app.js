@@ -2,30 +2,38 @@ import * as path from "path";
 import express from "express";
 import mongoose from "mongoose";
 import passport from "passport";
-import { logger } from "./logger.js";
 import { Server } from "socket.io";
-import { faker } from "@faker-js/faker";
+import { logger } from "./logger.js";
+import bodyParser from "body-parser";
+import { faker, tr } from "@faker-js/faker";
 import config from "./config/config.js";
 import swaggerJSDoc from "swagger-jsdoc";
 import cookieParser from "cookie-parser";
 import { engine } from "express-handlebars";
 import UserDTO from "./dao/DTOs/users.dto.js";
-import { signToken } from "./jwt/pass.token.js";
+import compression from "express-compression";
 import swaggerUIExpress from "swagger-ui-express";
 import cartsRouter from "./routes/carts.router.js";
 import usersRouter from "./routes/users.router.js";
-import ticketsRouter from "./routes/tickets.router.js";
-import productsRouter from "./routes/products.router.js";
 import UsersMongo from "./dao/mongo/users.mongo.js";
-import ProductsMongo from "./dao/mongo/products.mongo.js";
-import { Strategy as JwtStrategy } from "passport-jwt";
-import { ExtractJwt as ExtractJwt } from "passport-jwt";
 import initializePassport from "./config/passport.js";
+import { Strategy as JwtStrategy } from "passport-jwt";
+import ticketsRouter from "./routes/tickets.router.js";
+import { ExtractJwt as ExtractJwt } from "passport-jwt";
+import productsRouter from "./routes/products.router.js";
+import ProductsMongo from "./dao/mongo/products.mongo.js";
 import __dirname, { roleAuth, passportAuth, transporter } from "./utils.js";
+import {
+  signToken,
+  generateResetToken,
+  emailTokenLogin,
+  verifyResetToken,
+  validatePassword,
+} from "./jwt/pass.token.js";
 
 // Express
-const PORT = config.PORT;
 const app = express();
+const PORT = config.PORT;
 const usersMongo = new UsersMongo();
 const productsMongo = new ProductsMongo();
 
@@ -84,8 +92,11 @@ passport.use(
   })
 );
 
+app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.set("views", path.resolve(__dirname + "/views"));
 app.set("view engine", "handlebars");
@@ -93,6 +104,7 @@ app.engine("handlebars", engine());
 
 initializePassport();
 app.use(passport.initialize());
+app.use(logger);
 
 const server = app.listen(PORT, () => {
   logger.info(`Server listening on port ${PORT}`);
@@ -108,17 +120,22 @@ io.on("connection", (socket) => {
   });
 
   socket.on("newProd", (newProduct) => {
-    products.createProduct(newProduct);
-    io.emit("success", "Product created successfully");
+    let validateUser = usersMongo.getUserRole(newProduct.owner);
+    if (validateUser === "premium") {
+      productsMongo.createProduct(newProduct);
+      io.emit("success", "Product created successfully");
+    } else {
+      io.emit("error", "You are not an premium user");
+    }
   });
 
   socket.on("updProd", (id, updProduct) => {
-    products.updateProduct(id, updProduct);
+    productsMongo.updateProduct(id, updProduct);
     io.emit("success", "Product updated successfully");
   });
 
   socket.on("delProd", (id) => {
-    products.deleteProduct(id);
+    productsMongo.deleteProduct(id);
     io.emit("success", "Product deleted successfully");
   });
 
@@ -133,13 +150,13 @@ io.on("connection", (socket) => {
   });
 });
 
-// Routes
+// Routes Backend
 app.use("/carts", cartsRouter);
 app.use("/users", usersRouter);
 app.use("/tickets", ticketsRouter);
 app.use("/products", productsRouter);
 
-// Handlebars
+// Routes Frontend
 app.get("/", (req, res) => {
   logger.info("User connected to the home page.");
   res.sendFile("index.html", { root: app.get("views") });
@@ -152,8 +169,24 @@ app.get(
   (req, res) => {
     logger.info("User connected to the current page.");
     roleAuth("user")(req, res, async () => {
+      const userData = { email: req.user.email };
       const allProducts = await productsMongo.get();
-      res.render("userHome", { products: allProducts });
+      res.render("userHome", { products: allProducts, user: userData });
+    });
+  }
+);
+
+app.get(
+  "/current-plus",
+  passportAuth("jwt", { session: false }),
+  roleAuth("user"),
+  (req, res) => {
+    req.logger.info("User connected to the current-plus page.");
+    roleAuth("user")(req, res, async () => {
+      const { token } = req.query;
+      const emailToken = emailTokenLogin(token);
+      const allProducts = await productsMongo.get();
+      res.render("userHome", { products: allProducts, email: emailToken });
     });
   }
 );
@@ -179,8 +212,22 @@ app.post("/login", async (req, res) => {
   try {
     const token = signToken(res, email, password);
     const userDTO = new UserDTO(user);
-    res.json({ token, user: userDTO });
+    const allProducts = await productsMongo.get();
+    usersMongo.updateLastConnection(email);
+    res.json({ token, user: userDTO, allProducts });
     logger.info("User logged successfully.");
+  } catch (error) {
+    logger.error("Internal server error." + error.message);
+    res.status(500).send({ message: "Internal server error" });
+  }
+});
+
+app.get("/logout", (req, res) => {
+  try {
+    logger.info("User logged out successfully.");
+    let email = req.query.email;
+    usersMongo.updateLastConnection(email);
+    res.redirect("/");
   } catch (error) {
     logger.error("Internal server error." + error.message);
     res.status(500).send({ message: "Internal server error" });
@@ -213,6 +260,7 @@ app.get("/reset-password/:token", async (req, res) => {
 });
 
 app.get("/register", (req, res) => {
+  logger.info("User connected to the register page.");
   res.sendFile("register.html", { root: app.get("views") });
 });
 
@@ -265,7 +313,7 @@ app.get("/mockingproducts", async (req, res) => {
   res.json(productsMongo);
 });
 
-// Logger test route
+// Logger test routes
 app.get("/loggerTest", (req, res) => {
   logger.debug("Debug message");
   logger.http("HTTP message");
